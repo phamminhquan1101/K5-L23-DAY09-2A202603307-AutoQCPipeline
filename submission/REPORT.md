@@ -74,7 +74,18 @@ Kết quả trong `work/rep_nb/08_summary.json`: còn **6/202 ảnh thiếu file
 
 ## 5. Train: raw vs clean (tùy chọn, chấm riêng)
 
-Chưa chạy
+Đã chạy trên Kaggle GPU với cùng model `yolo26n.pt`, **20 epoch**, seed **0 và 1**, batch **16**, kích thước ảnh **640**. Hai biến thể dùng chung gold_val (40 ảnh) và test (100 ảnh). Số ảnh train trong bảng là số file được dựng trước khi Ultralytics kiểm tra và có thể bỏ ảnh/nhãn hỏng.
+
+Bảng từ `submission/results/comparison.md` (trung bình ± độ lệch chuẩn giữa hai seed):
+
+| biến thể | #ảnh train | số seed | map50 (TB ± độ lệch) | map50_95 (TB ± độ lệch) | precision (TB ± độ lệch) | recall (TB ± độ lệch) |
+|---|---|---|---|---|---|---|
+| raw | 224 | 2 | 0.726 ± 0.000 | 0.512 ± 0.004 | 0.764 ± 0.061 | 0.649 ± 0.028 |
+| clean | 202 | 2 | 0.701 ± 0.025 | 0.487 ± 0.008 | 0.759 ± 0.003 | 0.625 ± 0.019 |
+
+**Kết luận:** mAP50 clean − raw = **−0,0252** (giảm 2,52 điểm phần trăm), tương đương độ lệch chuẩn của clean **0,0246**; raw có độ lệch chuẩn **0,0002** (bảng làm tròn thành 0,000). Clean thấp hơn raw ở cả hai seed nhưng chỉ có hai lần chạy và 100 ảnh test, nên chưa đủ để kết luận tổng quát. Thí nghiệm hiện tại **không chứng minh clean tốt hơn raw**. AP50 trung bình lớp truck giảm rõ nhất: **0,6485 → 0,5377**.
+
+**Giả thuyết và cách kiểm:** (1) Raw còn ảnh trùng test/val (intake phát hiện 5 trường hợp LEAK_TEST), có thể làm điểm đánh giá lạc quan; cần thí nghiệm đối chứng loại ảnh rò rỉ, giữ nguyên các yếu tố khác. (2) Clean ít hơn 22 ảnh và vẫn Hold với **38/202 ảnh** còn cảnh báo chưa duyệt; có thể mất dữ liệu hữu ích hoặc còn nhãn sai, cần kiểm tra phân bố lớp và nhãn truck, đặc biệt ở ảnh chưa duyệt. Tiếp theo nên chạy thêm seed và thí nghiệm đối chứng; các giả thuyết trên chưa được xác nhận là nguyên nhân.
 
 ## 6. Quyết định và ghi chú AI
 
